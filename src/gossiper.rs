@@ -182,6 +182,7 @@ mod tests {
     use rand::{self, Rng};
     use std::{cmp, u64};
     use std::collections::BTreeMap;
+    use std::time::Instant;
 
     #[derive(Default)]
     struct Metrics {
@@ -337,7 +338,18 @@ mod tests {
         println!("network having {:?} nodes", num_of_nodes);
         let iterations = 1000;
         let mut metrics = Vec::new();
-        for _ in 0..iterations {
+        let start = Instant::now();
+        let mut last = start;
+        for i in 0..iterations {
+            if i % 10 == 0 {
+                println!(
+                    "Iteration {:03} -- {} seconds -- {} seconds.",
+                    i,
+                    last.elapsed().as_secs(),
+                    start.elapsed().as_secs()
+                );
+                last = Instant::now();
+            }
             metrics.push(send_messages(&mut gossipers, 1))
         }
 
@@ -363,9 +375,9 @@ mod tests {
 
     #[test]
     fn one_message() {
-        one_message_test(20);
-        one_message_test(200);
-        one_message_test(2000);
+        // one_message_test(20);
+        // one_message_test(200);
+        one_message_test(20000);
     }
 
     #[test]
